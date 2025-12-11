@@ -1,0 +1,49 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Tarefas - Django 6{% endblock %}
+
+{% block content %}
+<h1>📋 Tarefas <span class="badge">Django 6</span></h1>
+
+<div class="info">
+    <strong>Novidades Django 6 em uso:</strong><br>
+    ✅ Template Partials ({% templatetag openblock %} partialdef {% templatetag closeblock %})<br>
+    ✅ forloop.length (novo!)<br>
+    ✅ Background Tasks (@task)<br>
+    ✅ CSP Headers
+</div>
+
+<p><a href="{% url 'criar_tarefa' %}">+ Nova Tarefa</a></p>
+<br>
+
+{# =========================================================================== #}
+{# Django 6: Template Partial - Componente reutilizável                        #}
+{# =========================================================================== #}
+{% partialdef tarefa_item %}
+<div class="card {% if tarefa.concluida %}done{% endif %}">
+    <strong>{{ tarefa.titulo }}</strong>
+    <small style="float:right">
+        <a href="{% url 'toggle_tarefa' tarefa.pk %}">
+            {% if tarefa.concluida %}↩️ Reabrir{% else %}✅ Concluir{% endif %}
+        </a>
+    </small>
+</div>
+{% endpartialdef %}
+
+{# =========================================================================== #}
+{# Django 6: forloop.length - Total de itens no loop                           #}
+{# =========================================================================== #}
+{% if tarefas %}
+    <p><strong>Total: {{ tarefas|length }} tarefas</strong></p>
+    {% for tarefa in tarefas %}
+        {# Usando forloop.length (Django 6) #}
+        <small style="color:#666">Item {{ forloop.counter }} de {{ forloop.length }}</small>
+        
+        {# Django 6: Usando o partial definido acima #}
+        {% partial tarefa_item %}
+    {% endfor %}
+{% else %}
+    <p>Nenhuma tarefa ainda. <a href="{% url 'criar_tarefa' %}">Crie uma!</a></p>
+{% endif %}
+
+{% endblock %}
